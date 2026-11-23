@@ -43,6 +43,14 @@ flutter pub get
 flutter analyze
 
 # Linux-Desktop starten
+
+# Lizenz
+
+**Copyright (c) 2026 HanzoTheGreat**
+
+Dieses Projekt steht unter der PolyForm Noncommercial License 1.0.0 (PolyForm-Noncommercial-1.0.0) – siehe LICENSE.md bzw. https://polyformproject.org/licenses/noncommercial/1.0.0.
+
+Private, therapeutische und gemeinnützige Nutzung, Weitergabe und Veränderung sind frei erlaubt; jede kommerzielle Nutzung oder Monetarisierung ist untersagt.
 flutter run -d linux
 
 # Android-Release-APK bauen
