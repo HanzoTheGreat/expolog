@@ -1,0 +1,38 @@
+name: expolog
+description: "Lokaler, verschlüsselter Begleiter für Expositionstherapie und Verlaufsdokumentation."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  rust_lib_expolog:
+    path: rust_builder
+  flutter_rust_bridge: 2.13.0
+  path_provider: ^2.1.6
+  path: ^1.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  integration_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon.png"
+  adaptive_icon_background: "#121212"
+  adaptive_icon_foreground: "assets/icon.png"

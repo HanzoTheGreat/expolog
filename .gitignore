@@ -1,0 +1,40 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Rust / Cargokit
+rust/target/
+**/target/
+*.so
+*.dll
+*.dylib
+
+# Android / Gradle
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/key.properties
+*.jks
+*.keystore
+*.apk
+*.aab
+
+# Linux / IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Niemals lokale Datenbanken oder Backups committen
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.expolog
