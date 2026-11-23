@@ -47,7 +47,8 @@ flutter analyze
 flutter run -d linux
 
 # Android-Release-APK bauen
-flutter build apk --release```
+flutter build apk --release
+```
 
 # Lizenz
 
