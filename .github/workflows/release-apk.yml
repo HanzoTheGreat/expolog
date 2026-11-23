@@ -1,0 +1,97 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Rust toolchain & Android targets
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+
+      - name: Cache Cargo registry & host build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Run Rust unit tests
+        run: cargo test --manifest-path rust/Cargo.toml
+
+      - name: Fetch Flutter dependencies & analyze
+        run: |
+          flutter pub get
+          flutter analyze
+
+      - name: Build Android Release APK
+        run: flutter build apk --release
+
+      - name: Prepare release artifacts
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk dist/ExpoLog.apk
+          (cd dist && sha256sum ExpoLog.apk > ExpoLog.apk.sha256)
+
+      - name: Resolve release tag
+        id: meta
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "tag_name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            echo "release_name=ExpoLog ${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -f latest
+            git push -f origin latest
+            echo "tag_name=latest" >> "$GITHUB_OUTPUT"
+            echo "release_name=ExpoLog (Aktueller Build)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag_name }}
+          name: ${{ steps.meta.outputs.release_name }}
+          make_latest: "true"
+          body: |
+            Automatischer Android-Release-Build aus Commit `${{ github.sha }}`.
+
+            - **Direktdownload:** `ExpoLog.apk`
+            - **Prüfsumme:** `ExpoLog.apk.sha256`
+          files: |
+            dist/ExpoLog.apk
+            dist/ExpoLog.apk.sha256
